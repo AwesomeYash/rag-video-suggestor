@@ -2,30 +2,11 @@
   "type": "base",
   "version": "9",
   "dialect": "postgres",
-  "id": "26e985c2-6bd6-49c7-aba7-58e985358cf8",
+  "id": "eacb75fc-b34d-4ad7-9113-2e22249ff7c4",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "footprints": [
-    {
-      "statementType": "create_table",
-      "statementTarget": [
-        "table",
-        "public",
-        "tests"
-      ],
-      "writes": [
-        "s|tbl|public.tests",
-        "n|tbl|public.tests",
-        "e|tbl|public.tests",
-        "n|rel|public.tests",
-        "n|type|public.tests",
-        "n|rel|public.tests_pkey"
-      ],
-      "reads": [
-        "n|sch|public"
-      ]
-    },
     {
       "statementType": "create_table",
       "statementTarget": [
@@ -102,6 +83,27 @@
       ],
       "reads": [
         "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "account",
+        "account_issuer_accountId_uidx"
+      ],
+      "writes": [
+        "s|idx|public.account_issuer_accountId_uidx",
+        "n|idx|public.account_issuer_accountId_uidx",
+        "e|idx|public.account_issuer_accountId_uidx",
+        "n|rel|public.account_issuer_accountId_uidx"
+      ],
+      "reads": [
+        "n|tbl|public.account",
+        "n|sch|public",
+        "n|col|public.account.issuer",
+        "n|col|public.account.account_id"
       ]
     },
     {
@@ -214,12 +216,6 @@
   "ddl": [
     {
       "schema": "public",
-      "name": "tests",
-      "isRlsEnabled": false,
-      "entityType": "tables"
-    },
-    {
-      "schema": "public",
       "name": "account",
       "isRlsEnabled": false,
       "entityType": "tables"
@@ -244,35 +240,13 @@
     },
     {
       "schema": "public",
-      "table": "tests",
+      "table": "account",
       "name": "id",
-      "type": "integer",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": {
-        "type": "always",
-        "name": "tests_id_seq",
-        "increment": "1",
-        "startWith": "1",
-        "minValue": "1",
-        "maxValue": "2147483647",
-        "cache": 1,
-        "cycle": false
-      },
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "tests",
-      "name": "name",
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
+      "default": "pg_catalog.gen_random_uuid()",
       "generated": null,
       "identity": null,
       "entityType": "columns"
@@ -280,7 +254,7 @@
     {
       "schema": "public",
       "table": "account",
-      "name": "id",
+      "name": "issuer",
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -320,7 +294,7 @@
       "schema": "public",
       "table": "account",
       "name": "user_id",
-      "type": "text",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
@@ -450,11 +424,11 @@
       "schema": "public",
       "table": "session",
       "name": "id",
-      "type": "text",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "pg_catalog.gen_random_uuid()",
       "generated": null,
       "identity": null,
       "entityType": "columns"
@@ -541,7 +515,7 @@
       "schema": "public",
       "table": "session",
       "name": "user_id",
-      "type": "text",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
@@ -554,11 +528,11 @@
       "schema": "public",
       "table": "user",
       "name": "id",
-      "type": "text",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "pg_catalog.gen_random_uuid()",
       "generated": null,
       "identity": null,
       "entityType": "columns"
@@ -645,11 +619,11 @@
       "schema": "public",
       "table": "verification",
       "name": "id",
-      "type": "text",
+      "type": "uuid",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": null,
+      "default": "pg_catalog.gen_random_uuid()",
       "generated": null,
       "identity": null,
       "entityType": "columns"
@@ -718,6 +692,34 @@
       "generated": null,
       "identity": null,
       "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "account",
+      "name": "account_issuer_accountId_uidx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "issuer",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        },
+        {
+          "value": "account_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
     },
     {
       "schema": "public",
@@ -815,16 +817,6 @@
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "entityType": "fks"
-    },
-    {
-      "schema": "public",
-      "table": "tests",
-      "name": "tests_pkey",
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
     },
     {
       "schema": "public",
