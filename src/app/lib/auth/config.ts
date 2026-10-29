@@ -9,6 +9,9 @@ import * as schema from "../../db/schema";
 export const auth = betterAuth({
     secret: serverEnv.BETTER_AUTH_SECRET,
     baseURL: serverEnv.BETTER_AUTH_URL,
+    // Vercel branch/preview deployments are served from their own hosts, which
+    // Better Auth would otherwise reject as an invalid origin.
+    trustedOrigins: ["https://rag-video-suggestor-*-priyanshu-rankas-projects.vercel.app"],
     database: drizzleAdapter(db, { provider: "pg", schema: authSchema }),
     advanced: {
         database: {
