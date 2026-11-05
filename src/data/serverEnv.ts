@@ -10,6 +10,7 @@ export const serverEnv = createEnv({
         GITHUB_CLIENT_SECRET: z.string().min(1),
         // Authorizes requests that start the ingestion workflows
         CRON_SECRET: z.string().min(16),
+        OPENAI_API_KEY: z.string().min(1),
     },
     experimental__runtimeEnv: process.env,
     emptyStringAsUndefined: true,

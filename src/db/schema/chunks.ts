@@ -18,8 +18,7 @@ export const chunks = snakeCase.table(
       .references(() => content.id, { onDelete: "cascade" }),
     // Position within the source (e.g. seconds into a video). Unused for articles.
     startPosition: integer(),
-    // Nullable until embeddings are generated in a later change
-    embedding: vector({ dimensions: 1536 }),
+    embedding: vector({ dimensions: 1536 }).notNull(),
     text: text().notNull(),
     ...timestamps,
   },

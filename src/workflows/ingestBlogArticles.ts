@@ -6,6 +6,7 @@ import * as z from "zod";
 import { db } from "@/db/db";
 import { chunks, content } from "@/db/schema";
 import { chunkArticles } from "@/lib/chunking/chunkArticles";
+import { embedChunks } from "@/lib/embedding/embed-chunks";
 import { batchExec } from "./utils/batchExec";
 
 const RSS_URL = "https://blog.webdevsimplified.com/rss.xml";
@@ -111,6 +112,8 @@ async function ingestArticleStep(
     throw new FatalError(`No article text found: ${article.url}`);
   }
 
+  const embeddings = await embedChunks(chunkTexts);
+
   // Generate the id here so the content and its chunks can be written together
   const contentId = crypto.randomUUID();
 
@@ -128,10 +131,10 @@ async function ingestArticleStep(
       content: mainHtml,
     }),
     db.insert(chunks).values(
-      chunkTexts.map(text => ({
+      chunkTexts.map((text, i) => ({
         contentId,
         startPosition: null,
-        embedding: null,
+        embedding: embeddings[i],
         text,
       })),
     ),
