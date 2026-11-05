@@ -11,7 +11,7 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "auth:generate-schema": "auth generate --output ./src/app/db/schemas/auth.ts --config ./src/app/lib/auth/config.ts --yes",
+    "auth:generate-schema": "auth generate --output ./src/db/schema/auth.ts --config ./src/lib/auth/config.ts --yes",
     "test": "vitest run",
     "test:watch": "vitest"
   },

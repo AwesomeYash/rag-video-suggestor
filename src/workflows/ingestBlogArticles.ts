@@ -3,9 +3,10 @@ import * as cheerio from "cheerio";
 import { eq } from "drizzle-orm";
 import { FatalError } from "workflow";
 import * as z from "zod";
-import { db } from "../db/db";
-import { chunks, content } from "../db/schema";
-import { chunkArticle } from "../lib/chunking/chunkArticle";
+import { db } from "@/db/db";
+import { chunks, content } from "@/db/schema";
+import { chunkArticles } from "@/lib/chunking/chunkArticles";
+import { batchExec } from "./utils/batchExec";
 
 const RSS_URL = "https://blog.webdevsimplified.com/rss.xml";
 const BATCH_SIZE = 10;
@@ -30,24 +31,15 @@ export async function ingestBlogArticlesWorkflow() {
 
   const newArticles = await getNewArticlesFromRssFeed();
 
-  let ingested = 0;
-  let skipped = 0;
-  const failed: string[] = [];
-
   // Send requests to the blog in batches so we never hit it with every
   // article at once. A failed article doesn't stop the rest of its batch.
-  for (let i = 0; i < newArticles.length; i += BATCH_SIZE) {
-    const batch = newArticles.slice(i, i + BATCH_SIZE);
-    const outcomes = await Promise.allSettled(batch.map(ingestArticleStep));
+  const { failedItems, ...result } = await batchExec(
+    newArticles,
+    ingestArticleStep,
+    { batchSize: BATCH_SIZE },
+  );
 
-    outcomes.forEach((outcome, j) => {
-      if (outcome.status === "rejected") failed.push(batch[j].url);
-      else if (outcome.value === "skipped") skipped++;
-      else ingested++;
-    });
-  }
-
-  return { found: newArticles.length, ingested, skipped, failed };
+  return { ...result, failedUrls: failedItems.map(article => article.url) };
 }
 
 // Step 1: every article in the RSS feed that isn't in the database yet
@@ -82,7 +74,7 @@ async function getNewArticlesFromRssFeed(): Promise<FeedArticle[]> {
 // that was already saved is skipped.
 async function ingestArticleStep(
   article: FeedArticle,
-): Promise<"ingested" | "skipped"> {
+): Promise<void> {
   "use step";
 
   const [existing] = await db
@@ -90,7 +82,7 @@ async function ingestArticleStep(
     .from(content)
     .where(eq(content.url, article.url))
     .limit(1);
-  if (existing != null) return "skipped";
+  if (existing != null) return;
 
   const response = await fetch(article.url);
   if (response.status === 404) {
@@ -114,7 +106,7 @@ async function ingestArticleStep(
     throw new FatalError(`No thumbnail image found: ${article.url}`);
   }
 
-  const chunkTexts = chunkArticle(mainHtml);
+  const chunkTexts = chunkArticles(mainHtml);
   if (chunkTexts.length === 0) {
     throw new FatalError(`No article text found: ${article.url}`);
   }
@@ -144,6 +136,4 @@ async function ingestArticleStep(
       })),
     ),
   ]);
-
-  return "ingested";
 }

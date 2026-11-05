@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { headers } from "next/headers";
-import { auth } from "../lib/auth/config";
+import { auth } from "@/lib/auth/config";
 import { SignInButton } from "./sign-in-button";
 import { SignOutButton } from "./sign-out-button";
 

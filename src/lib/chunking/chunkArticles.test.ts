@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { chunkArticle } from "./chunkArticle";
+import { chunkArticles } from "./chunkArticles";
 
-describe("chunkArticle", () => {
+describe("chunkArticles", () => {
   it("puts text before the first h2 in its own chunk", () => {
-    const chunks = chunkArticle(`
+    const chunks = chunkArticles(`
       <p>Intro one.</p>
       <p>Intro two.</p>
       <h2>First</h2>
@@ -17,7 +17,7 @@ describe("chunkArticle", () => {
   });
 
   it("starts the chunk with the h2 heading and runs to the next h2", () => {
-    const chunks = chunkArticle(`
+    const chunks = chunkArticles(`
       <h2>One</h2>
       <p>a</p>
       <h3>Sub</h3>
@@ -30,16 +30,16 @@ describe("chunkArticle", () => {
   });
 
   it("returns a single chunk for an article with no h2", () => {
-    expect(chunkArticle("<p>Only</p><p>text</p>")).toEqual(["Only\n\ntext"]);
+    expect(chunkArticles("<p>Only</p><p>text</p>")).toEqual(["Only\n\ntext"]);
   });
 
   it("returns no chunks for empty content", () => {
-    expect(chunkArticle("")).toEqual([]);
-    expect(chunkArticle("  <p> </p>  ")).toEqual([]);
+    expect(chunkArticles("")).toEqual([]);
+    expect(chunkArticles("  <p> </p>  ")).toEqual([]);
   });
 
   it("keeps only text, never markup", () => {
-    const [chunk] = chunkArticle(
+    const [chunk] = chunkArticles(
       `<p>Use <a href="/x">the <code>fetch</code></a> <strong>API</strong>.</p>`,
     );
 
@@ -47,7 +47,7 @@ describe("chunkArticle", () => {
   });
 
   it("drops script and style content", () => {
-    const chunks = chunkArticle(`
+    const chunks = chunkArticles(`
       <p>Visible</p>
       <script>window.secret = 1</script>
       <style>.a { color: red }</style>
@@ -57,7 +57,7 @@ describe("chunkArticle", () => {
   });
 
   it("separates list items and table cells", () => {
-    const chunks = chunkArticle(`
+    const chunks = chunkArticles(`
       <ul><li>One</li><li>Two</li></ul>
       <div><table><tr><td>A</td><td>B</td></tr></table></div>
     `);
@@ -66,7 +66,7 @@ describe("chunkArticle", () => {
   });
 
   it("keeps code block line breaks and indentation", () => {
-    const [chunk] = chunkArticle(
+    const [chunk] = chunkArticles(
       `<pre><code>if (a) {\n  b()\n}</code></pre>`,
     );
 
@@ -74,7 +74,7 @@ describe("chunkArticle", () => {
   });
 
   it("does not split on an h2 nested inside another element", () => {
-    const chunks = chunkArticle(`
+    const chunks = chunkArticles(`
       <p>Intro</p>
       <div><h2>Demo heading</h2><p>demo</p></div>
       <h2>Real</h2>

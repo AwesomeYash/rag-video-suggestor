@@ -17,7 +17,7 @@ const CELL_SELECTOR = "td, th";
  * - Any text before the first `<h2>` is saved as its own chunk.
  * - Only text is kept, never HTML markup.
  */
-export function chunkArticle(html: string): string[] {
+export function chunkArticles(html: string): string[] {
   const $ = cheerio.load(html, null, false);
   const chunks: string[] = [];
   let current: string[] = [];
