@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { AuthStatus } from "./_components/auth-status";
+import { AuthStatus } from "@/components/auth-status";
 
 export default function Home() {
   return (

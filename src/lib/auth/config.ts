@@ -1,10 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { nextCookies } from "better-auth/next-js";
-import { serverEnv } from "../../data/serverEnv";
-import { db } from "../../db/db";
-import * as authSchema from "../../db/schemas/auth";
-import * as schema from "../../db/schema";
+import { serverEnv } from "@/data/serverEnv";
+import { db } from "@/db/db";
+import * as authSchema from "@/db/schema/auth";
+import * as schema from "@/db/schema";
 
 export const auth = betterAuth({
     secret: serverEnv.BETTER_AUTH_SECRET,
