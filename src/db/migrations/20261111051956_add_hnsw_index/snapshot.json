@@ -1,0 +1,60 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "3e03818c-00e0-4975-9f09-411aee879ed6",
+  "prevIds": [
+    "61e9050a-620d-4559-bc0d-2705f5f68292"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "chunks",
+        "embedding_index"
+      ],
+      "writes": [
+        "s|idx|public.embedding_index",
+        "n|idx|public.embedding_index",
+        "e|idx|public.embedding_index",
+        "n|rel|public.embedding_index"
+      ],
+      "reads": [
+        "n|tbl|public.chunks",
+        "n|sch|public",
+        "n|col|public.chunks.embedding"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chunks",
+        "name": "embedding_index",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "embedding",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": {
+              "name": "vector_cosine_ops",
+              "default": false
+            }
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "hnsw",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}

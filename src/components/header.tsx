@@ -5,7 +5,7 @@ import { SignOutButton } from "./sign-out-button";
 
 export function HeaderShell({ children }: { children?: React.ReactNode }) {
   return (
-    <header className="border-b border-black/[.08] dark:border-white/[.145]">
+    <header className="sticky top-0 z-50 border-b border-black/[.08] bg-background/80 backdrop-blur dark:border-white/[.145]">
       <div className="mx-auto flex h-16 w-full max-w-3xl items-center justify-between px-4">
         <span className="text-lg font-semibold">Blog Search</span>
         <div className="flex items-center gap-3">{children}</div>

@@ -22,5 +22,12 @@ export const chunks = snakeCase.table(
     text: text().notNull(),
     ...timestamps,
   },
-  table => [index("chunks_contentId_idx").on(table.contentId)],
+  table => [
+    index("chunks_contentId_idx").on(table.contentId),
+    // Speeds up nearest-neighbour searches on the embedding
+    index("embedding_index").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops"),
+    ),
+  ],
 );
