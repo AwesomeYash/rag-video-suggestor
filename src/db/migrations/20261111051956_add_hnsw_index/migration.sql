@@ -1,0 +1,1 @@
+CREATE INDEX "embedding_index" ON "chunks" USING hnsw ("embedding" vector_cosine_ops);
