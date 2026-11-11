@@ -72,14 +72,23 @@ export function SearchBox({ signedIn }: { signedIn: boolean }) {
         </div>
       )}
 
-      {state?.error != null && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
-        >
-          {state.error}
-        </div>
-      )}
+      {state?.error != null &&
+        (state.errorType === "rate-limited" ? (
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300"
+          >
+            <p className="font-medium">Search limit reached</p>
+            <p className="mt-1">{state.error}</p>
+          </div>
+        ) : (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
+          >
+            {state.error}
+          </div>
+        ))}
 
       {state != null && state.error == null && (
         <div className={pending ? "opacity-50 transition-opacity" : undefined}>

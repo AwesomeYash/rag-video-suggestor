@@ -15,6 +15,10 @@ export const serverEnv = createEnv({
         GOOGLE_CLIENT_ID: z.string().min(1),
         GOOGLE_CLIENT_SECRET: z.string().min(1),
         GOOGLE_REFRESH_TOKEN: z.string().min(1),
+        // A user can search at most RATE_LIMIT_MAX_REQUESTS times within the
+        // last RATE_LIMIT_WINDOW_HOURS hours
+        RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive(),
+        RATE_LIMIT_WINDOW_HOURS: z.coerce.number().positive(),
     },
     experimental__runtimeEnv: process.env,
     emptyStringAsUndefined: true,

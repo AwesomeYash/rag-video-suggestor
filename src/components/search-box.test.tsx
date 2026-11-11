@@ -92,6 +92,24 @@ describe("SearchBox", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("Something went wrong");
   });
 
+  it("shows a rate limit error as a limit notice, not a failure", async () => {
+    searchAction.mockResolvedValue({
+      query: "css",
+      results: [],
+      error: "You've used your 10 searches for the last 1 hour. Try again in 12 minutes.",
+      errorType: "rate-limited",
+    });
+    const user = userEvent.setup();
+    render(<SearchBox signedIn />);
+
+    await user.type(screen.getByLabelText("Search the blog"), "css{Enter}");
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("Search limit reached");
+    expect(alert.textContent).toContain("Try again in 12 minutes.");
+    expect(screen.queryByText(/no results/i)).toBeNull();
+  });
+
   it("shows a searching state while the request is running", async () => {
     let finish: (state: SearchState) => void = () => {};
     searchAction.mockReturnValue(new Promise<SearchState>(resolve => (finish = resolve)));
