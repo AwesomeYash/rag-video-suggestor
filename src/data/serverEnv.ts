@@ -11,6 +11,10 @@ export const serverEnv = createEnv({
         // Authorizes requests that start the ingestion workflows
         CRON_SECRET: z.string().min(16),
         OPENAI_API_KEY: z.string().min(1),
+        // OAuth credentials for the YouTube channel that owns the videos
+        GOOGLE_CLIENT_ID: z.string().min(1),
+        GOOGLE_CLIENT_SECRET: z.string().min(1),
+        GOOGLE_REFRESH_TOKEN: z.string().min(1),
         // A user can search at most RATE_LIMIT_MAX_REQUESTS times within the
         // last RATE_LIMIT_WINDOW_HOURS hours
         RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive(),
